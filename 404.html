@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Not found · Boros</title>
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f3f0e8" media="(prefers-color-scheme: light)">
+<link rel="icon" href="/img/favicon.png">
+<script src="/theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #fff; --dim: #9a9a9a; --accent: #d71921; --bg: #000; color-scheme: dark light; }
+  @media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --ink: #161513; --dim: #66625a; --bg: #f3f0e8; color-scheme: light; } }
+  :root[data-theme="light"] { --ink: #161513; --dim: #66625a; --bg: #f3f0e8; color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--ink);
+         font: 16px/1.6 "Space Grotesk", system-ui, sans-serif; padding: 16px; text-align: center; }
+  .code { font: 700 14px "Space Mono", monospace; letter-spacing: .3em; color: var(--accent); }
+  h1 { font-size: clamp(34px, 8vw, 56px); font-weight: 500; line-height: 1.05; margin: 14px 0 12px; }
+  p { font: 14px/1.6 "Space Mono", monospace; color: var(--dim); margin: 0 0 28px; }
+  a { display: inline-flex; align-items: center; min-height: 48px; padding: 0 24px; border-radius: 999px; background: var(--accent);
+      color: #fff; text-decoration: none; font: 700 14px "Space Mono", monospace; }
+</style>
+</head>
+<body>
+<main>
+  <div class="code">404</div>
+  <h1>Nothing here.<br>Dry, at least.</h1>
+  <p>This page doesn't exist.</p>
+  <a href="/">Back to Boros</a>
+</main>
+</body>
+</html>

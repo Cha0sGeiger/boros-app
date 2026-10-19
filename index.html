@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boros Weather</title>
+<meta name="description" content="Boros is a calm, precise weather app for iPhone and Apple Watch: the next two hours, the next 24 hours you can drag through, plans for your week and a look that's entirely yours.">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f3f0e8" media="(prefers-color-scheme: light)">
+<meta property="og:title" content="Boros Weather">
+<meta property="og:description" content="Weather, your way. A calm, precise forecast for iPhone and Apple Watch.">
+<meta property="og:image" content="img/top.jpg">
+<link rel="icon" href="img/favicon.png">
+<script src="theme.js"></script>
+<link rel="apple-touch-icon" href="img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000;
+    --ink: #fff;
+    --dim: #9a9a9a;
+    --faint: #2a2a2a;
+    --hairline: #1c1c1c;
+    --card: #0b0b0b;
+    --accent: #d71921;
+    --accent-text: #ff3b42;
+    --on-accent: #fff;
+    --unlit: color-mix(in srgb, var(--ink) 11%, var(--bg));
+    --line: color-mix(in srgb, var(--ink) 18%, var(--bg));
+
+    --mono: "Space Mono", ui-monospace, monospace;
+    --prose: "Space Grotesk", system-ui, sans-serif;
+    color-scheme: dark light;
+  }
+  /* Light: the app's Paper theme. Dark: Classic. */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) { --bg: #f3f0e8; --ink: #161513; --dim: #66625a; --accent: #d71921; --accent-text: #c4161d; --hairline: #e0dbd0; --card: #ebe7dd; --shadow: rgba(60,50,30,.18); color-scheme: light; }
+  }
+  :root[data-theme="light"] { --bg: #f3f0e8; --ink: #161513; --dim: #66625a; --accent: #d71921; --accent-text: #c4161d; --hairline: #e0dbd0; --card: #ebe7dd; --shadow: rgba(60,50,30,.18); color-scheme: light; }
+  :root[data-theme="dark"] { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; background: var(--bg); }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--prose); line-height: 1.5; overflow-x: hidden; }
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 700px) { .wrap { padding: 0 32px; } }
+
+  .caption { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-text); margin: 0 0 14px; }
+  .dim { color: var(--dim); }
+  .mono { font-family: var(--mono); }
+  .dots svg { display: block; overflow: visible; }
+
+  /* Header */
+  header { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--hairline); }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 60px; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 600; font-size: 18px; }
+  .brand img { width: 30px; height: 30px; border-radius: 8px; }
+  nav { display: flex; gap: 22px; font-family: var(--mono); font-size: 13px; }
+  nav a { text-decoration: none; color: var(--dim); }
+  nav a:hover { color: var(--ink); }
+  @media (max-width: 640px) { nav .hide-sm { display: none; } nav { gap: 16px; } }
+
+  .mode-toggle { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line, var(--hairline)); background: transparent; color: var(--ink);
+                 display: inline-grid; place-items: center; cursor: pointer; padding: 0; flex: none; }
+  .mode-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mode-toggle .moon, .mode-toggle[data-mode="light"] .sun { display: none; }
+  .mode-toggle[data-mode="light"] .moon { display: block; }
+  nav { align-items: center; }
+
+  /* Hero */
+  .hero { position: relative; padding: 56px 0 40px; overflow: hidden; }
+  .hero-grid { display: grid; gap: 40px; align-items: center; }
+  @media (min-width: 880px) { .hero-grid { grid-template-columns: 1.1fr .9fr; gap: 56px; } .hero { padding: 88px 0 72px; } }
+  .field { position: absolute; top: -40px; right: -60px; width: 560px; height: 520px; pointer-events: none; opacity: .9; }
+  .hero h1 { font-size: clamp(44px, 9vw, 84px); line-height: 1.02; font-weight: 500; letter-spacing: -.02em; margin: 30px 0 18px; }
+  .hero p.lead { font-family: var(--mono); font-size: 15px; color: var(--dim); max-width: 34em; margin: 0 0 30px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .pill { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 26px; border-radius: 999px; font-family: var(--mono); font-weight: 700; font-size: 15px; text-decoration: none; }
+  .pill.solid { background: var(--accent); color: var(--on-accent); }
+  .pill.line { border: 1px solid var(--line); color: var(--ink); background: transparent; cursor: pointer; }
+  .soon { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+
+  /* Phones */
+  .phone { position: relative; width: 100%; max-width: 320px; margin: 0 auto; border-radius: 46px; padding: 9px; background: #111; border: 1px solid var(--line); box-shadow: 0 30px 80px color-mix(in srgb, var(--accent) 10%, transparent), 0 20px 60px var(--shadow, rgba(0,0,0,.45)); }
+  .phone img { border-radius: 38px; width: 100%; height: auto; }
+  .phone.sm { max-width: 270px; }
+
+  /* Sections */
+  section { padding: 72px 0; border-top: 1px solid var(--hairline); }
+  @media (min-width: 880px) { section { padding: 104px 0; } }
+  h2 { font-size: clamp(30px, 5vw, 46px); line-height: 1.08; font-weight: 500; letter-spacing: -.015em; margin: 0 0 18px; }
+  h3 { font-size: 21px; font-weight: 500; margin: 0 0 6px; }
+  .body { font-family: var(--mono); font-size: 14px; color: var(--dim); margin: 0; }
+  .body + .body { margin-top: 12px; }
+
+  .feature { display: grid; gap: 40px; align-items: center; }
+  @media (min-width: 880px) { .feature { grid-template-columns: 1fr 1fr; gap: 72px; } .feature.flip > .text { order: 2; } }
+  .points { list-style: none; padding: 0; margin: 26px 0 0; display: grid; gap: 14px; }
+  .points li { display: grid; grid-template-columns: 14px 1fr; gap: 12px; font-family: var(--mono); font-size: 14px; color: var(--dim); }
+  .points li::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-top: 8px; }
+  .points b { color: var(--ink); font-weight: 400; }
+
+  /* Time-travel demo */
+  .demo { background: var(--card); border: 1px solid var(--hairline); border-radius: 26px; padding: 22px 20px 18px; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+  .demo-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .demo-temp { font-size: clamp(88px, 18vw, 136px); font-weight: 500; line-height: .9; letter-spacing: -.04em; margin: 14px 0 12px; font-variant-numeric: tabular-nums; }
+  .demo-side { text-align: right; font-family: var(--mono); font-size: 13px; color: var(--dim); }
+  .demo-side .hi { color: var(--accent-text); }
+  .demo-row { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; letter-spacing: .14em; margin-top: 18px; }
+  .demo-row .hint { color: var(--dim); letter-spacing: 0; }
+  #demo-graph { width: 100%; height: auto; display: block; margin-top: 10px; cursor: ew-resize; }
+  .demo-axis { position: relative; height: 16px; font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 6px; }
+  .demo-axis span { position: absolute; transform: translateX(-50%); }
+  .demo-axis span:first-child { transform: none; }
+  .hero-grid > *, .feature > * { min-width: 0; }
+
+  /* Grid of small features */
+  .grid { display: grid; gap: 14px; margin-top: 40px; }
+  @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 960px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+  .wgrid { display: grid; gap: 22px 18px; margin-top: 40px; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  @media (min-width: 880px) { .wgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 24px; } }
+  .wgrid figure { margin: 0; }
+  .wgrid .m, .wgrid .l, .wgrid .more { grid-column: span 2; }
+  .wgrid img { display: block; width: 100%; height: auto; box-shadow: 0 18px 50px var(--shadow, rgba(0,0,0,.45)); }
+  .wgrid .s img { border-radius: 15.5% / 15.5%; }
+  .wgrid .m img { border-radius: 7% / 15%; }
+  .wgrid .l img { border-radius: 7% / 6.7%; }
+  .wgrid figcaption { font-family: var(--mono); font-size: 13px; line-height: 1.55; color: var(--dim); margin-top: 14px; }
+  .wgrid figcaption b { display: block; font-family: var(--prose); font-size: 17px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .wgrid .tag { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; color: var(--accent-text); margin-left: 8px; vertical-align: 2px; }
+  .card { background: var(--card); border: 1px solid var(--hairline); border-radius: 20px; padding: 22px; }
+  .card .k { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; color: var(--accent-text); margin-bottom: 14px; }
+
+  /* Theme switcher: only the phone changes */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+  .chip { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 0 16px 0 10px; border-radius: 999px;
+          border: 1px solid var(--line); background: transparent; color: var(--ink); font: 13px var(--mono); cursor: pointer; }
+  .chip i { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line); position: relative; flex: none; }
+  .chip i::after { content: ""; position: absolute; right: 3px; top: 3px; width: 6px; height: 6px; border-radius: 50%; background: var(--d); }
+  .chip[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .theme-note { font: 14px/1.6 var(--mono); color: var(--dim); margin: 22px 0 0; min-height: 3.2em; }
+  .theme-note b { color: var(--ink); font-weight: 400; }
+  .swap { position: relative; }
+  .swap img { transition: opacity .45s ease; }
+  .swap > * + img { position: absolute; inset: 9px; width: calc(100% - 18px); }
+
+  /* History preview (coming soon) */
+  .soon-tag { display: inline-block; margin-left: 8px; padding: 3px 8px; border-radius: 999px; background: var(--accent);
+              color: var(--on-accent); font: 700 9px var(--mono); letter-spacing: .12em; vertical-align: 1px; }
+  .hist { background: var(--card); border: 1px solid var(--hairline); border-radius: 26px; padding: 24px 20px; }
+  .hist-head { display: flex; flex-direction: column; gap: 4px; }
+  .hist-place { font-size: 24px; font-weight: 500; }
+  .hist-sub { font: 12px var(--mono); color: var(--dim); }
+  .hist-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .hist-tiles div { background: color-mix(in srgb, var(--ink) 5%, transparent); border-radius: 14px; padding: 12px 10px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .hist-tiles b { font-size: clamp(18px, 5vw, 26px); font-weight: 500; white-space: nowrap; }
+  .hist-tiles span { font: 10px var(--mono); color: var(--dim); }
+  .hist-tiles em { font: 10px var(--mono); font-style: normal; color: var(--accent-text); }
+  .hist-rows div { display: flex; justify-content: space-between; font: 14px var(--mono); padding: 11px 0; border-bottom: 1px solid var(--hairline); }
+  .hist-rows span { color: var(--dim); }
+
+  /* Free / Pro */
+  .plans { display: grid; gap: 14px; margin-top: 40px; }
+  @media (min-width: 820px) { .plans { grid-template-columns: 1fr 1fr; } }
+  .plan { border: 1px solid var(--hairline); border-radius: 24px; padding: 28px 24px; background: var(--card); }
+  .plan.pro { border-color: var(--accent); }
+  .plan h3 { font-size: 26px; margin-bottom: 4px; }
+  .plan .sub { font-family: var(--mono); font-size: 13px; color: var(--dim); margin: 0 0 20px; }
+
+  /* Footer */
+  footer { border-top: 1px solid var(--hairline); padding: 48px 0 64px; font-family: var(--mono); font-size: 12px; color: var(--dim); }
+  .foot { display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; align-items: flex-start; }
+  footer p { margin: 0 0 8px; }
+
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="#top" aria-label="Boros, back to top"><img src="img/icon.png" alt="" width="30" height="30">Boros</a>
+    <nav aria-label="Sections">
+      <a href="#forecast">Forecast</a>
+      <a href="#plans" class="hide-sm">Plans</a>
+      <a href="#history" class="hide-sm">History</a>
+      <a href="#look" class="hide-sm">Look</a>
+      <a href="#widgets" class="hide-sm">Widgets</a>
+      <a href="#pro">Pro</a>
+      <a href="support.html">Support</a>
+      <button class="mode-toggle" type="button" aria-label="Switch to light mode"><svg class="sun" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3.2" fill="currentColor"/><circle cx="14.20" cy="8.00" r="1.1" fill="currentColor"/><circle cx="12.38" cy="12.38" r="1.1" fill="currentColor"/><circle cx="8.00" cy="14.20" r="1.1" fill="currentColor"/><circle cx="3.62" cy="12.38" r="1.1" fill="currentColor"/><circle cx="1.80" cy="8.00" r="1.1" fill="currentColor"/><circle cx="3.62" cy="3.62" r="1.1" fill="currentColor"/><circle cx="8.00" cy="1.80" r="1.1" fill="currentColor"/><circle cx="12.38" cy="3.62" r="1.1" fill="currentColor"/></svg><svg class="moon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M12.2 10.9A5.6 5.6 0 0 1 5.1 3.8a5.6 5.6 0 1 0 7.1 7.1z" fill="currentColor"/></svg></button>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<div class="hero">
+  <svg class="field" id="field" aria-hidden="true"></svg>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="dots" data-dots="BOROS" data-pitch="9" data-unlit="1" role="img" aria-label="Boros"></div>
+      <div class="dots" data-dots="WEATHER" data-pitch="4.2" data-color="var(--accent-text)" style="margin-top:12px" aria-hidden="true"></div>
+      <h1>Weather,<br>your way.</h1>
+      <p class="lead">A calm, precise forecast for iPhone and Apple Watch. The next two hours, the next 24 you can drag through, plans for your week and a look that's entirely yours.</p>
+      <div class="cta">
+        <a class="pill solid" href="#forecast">See what it does</a>
+        <span class="soon">Coming soon to the App Store</span>
+      </div>
+    </div>
+    <div class="phone"><picture><source data-light media="(prefers-color-scheme: light)" srcset="img/top-light.jpg"><img src="img/top.jpg" width="644" height="1400" alt="Boros on iPhone: 9° and clear in Zagreb, the next 24 hours as a dot graph and the next two hours of rain."></picture></div>
+  </div>
+</div>
+
+<section id="forecast">
+  <div class="wrap feature">
+    <div class="text">
+      <p class="caption">Time-travel</p>
+      <h2>Drag through the next 24 hours.</h2>
+      <p class="body">Slide along the graph and the big temperature follows, hour by hour, with a soft tick for each one. Let go and it springs back to now.</p>
+      <p class="body">Try it here.</p>
+    </div>
+    <div class="demo" id="demo" aria-label="Time-travel demo">
+      <div class="demo-top">
+        <div class="dots" id="demo-when" data-dots="NOW" data-pitch="3.6" data-color="var(--accent-text)" aria-hidden="true"></div>
+        <div class="demo-side"><div><span class="hi" id="demo-hi">H 19°</span>&nbsp; <span id="demo-lo">L 8°</span></div><div id="demo-feels" style="margin-top:6px">FEELS 9°</div></div>
+      </div>
+      <div class="demo-temp" id="demo-temp" aria-live="polite">9°</div>
+      <div class="dots" id="demo-word" data-dots="CLEAR" data-pitch="5" aria-hidden="true"></div>
+      <div class="demo-row"><span class="caption" style="margin:0">Next 24 hours</span><span class="hint" id="demo-hint">← drag to time-travel →</span></div>
+      <svg id="demo-graph" viewBox="0 0 480 150" role="slider" tabindex="0" aria-label="Hour" aria-valuemin="0" aria-valuemax="23" aria-valuenow="0" aria-valuetext="Now, 9°, clear"></svg>
+      <div class="demo-axis" id="demo-axis"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap feature flip">
+    <div class="text">
+      <p class="caption">The forecast</p>
+      <h2>Everything you check, nothing you don't.</h2>
+      <p class="body">One screen, top to bottom: what it's like now, the next 24 hours, the next two hours of rain, the details and seven days ahead.</p>
+      <ul class="points">
+        <li><span><b>Next 2 hours</b> in 15-minute steps, with a plain sentence: "Dry for the next two hours."</span></li>
+        <li><span><b>A headline that helps</b>: bring a jacket, grab an umbrella, gusts later.</span></li>
+        <li><span><b>Feels like, wind, humidity, pressure, UV</b>, rain today and sunrise and sunset.</span></li>
+        <li><span><b>Seven days</b> with highs, lows and a red chance of rain when it matters.</span></li>
+        <li><span><b>Your places</b>: swipe between your location and the cities you save.</span></li>
+        <li><span><b>Share a day</b> as a picture with whoever you're meeting.</span></li>
+      </ul>
+    </div>
+    <div class="phone sm"><picture><source data-light media="(prefers-color-scheme: light)" srcset="img/bottom-light.jpg"><img src="img/bottom.jpg" width="644" height="1400" loading="lazy" alt="Details and the 7-day forecast in Boros: wind, humidity, pressure, UV, sunrise and sunset, then seven days with highs, lows and chance of rain."></picture></div>
+  </div>
+</section>
+
+<section id="plans">
+  <div class="wrap feature">
+    <div class="text">
+      <p class="caption">Best time for…</p>
+      <h2>The best window, found for you.</h2>
+      <p class="body">Boros reads the next two days and picks the best time for a run, a ride, a walk with the baby, drying laundry, a barbecue or photos. Tell it the temperatures you like and it plans around them.</p>
+      <p class="caption" style="margin-top:40px">Up next &amp; tracking</p>
+      <h3>What's coming, on the main page.</h3>
+      <p class="body">Calendar events with a place get a leave-by time. Any trip you plan can be tracked there too, one at a time, until it's done.</p>
+    </div>
+    <div class="phone sm"><picture><source data-light media="(prefers-color-scheme: light)" srcset="img/tracking-light.jpg"><img src="img/tracking.jpg" width="644" height="1400" loading="lazy" alt="The main page: Up next shows a dinner with Leave by 12:36, Tracking shows Oslo to Bergen with the verdict LAYERS, then the next two hours and Best time for."></picture></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap feature flip">
+    <div class="text">
+      <p class="caption">Trips</p>
+      <h2>Weather along the whole way.</h2>
+      <p class="body">Plan a drive, a stay somewhere or a flight. Boros checks departures across your window, picks the best one and shows the weather at each point of the route, in local time.</p>
+      <ul class="points">
+        <li><span><b>Routes</b>, with up to two stops on the way: the best time to leave, with ice, rain and wind along the road.</span></li>
+        <li><span><b>Places</b>: what it will be like while you're there.</span></li>
+        <li><span><b>Flights</b>: delay risks at each airport and what to wear when you land.</span></li>
+        <li><span><b>Track it</b>: keep one trip on the main page. Boros checks it once a day, and more often as it gets close.</span></li>
+      </ul>
+    </div>
+    <div class="phone sm"><picture><source data-light media="(prefers-color-scheme: light)" srcset="img/trip-light.jpg"><img src="img/trip.jpg" width="644" height="1400" loading="lazy" alt="A trip from Oslo to Bergen: best time to leave 10:48, the verdict LAYERS, and the temperature at Oslo, Flå, Ustaoset, Voss and Bergen."></picture></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap feature">
+    <div class="text">
+      <p class="caption">From your calendar</p>
+      <h2>Open an event, see when to go.</h2>
+      <p class="body">Events with a place open on what matters: when to leave, how long it takes, and what the weather does on the way. Change the route or the time underneath if you need to.</p>
+      <ul class="points">
+        <li><span><b>Leave-by time</b> with ten minutes to spare, or a heads-up when you're running late.</span></li>
+        <li><span><b>Flights</b>: write <b>Flight to Split</b> as the title and the airport you leave from as the location, with takeoff and landing as the times.</span></li>
+        <li><span><b>Only on your phone</b>: Boros reads your calendar on the device and nothing leaves it.</span></li>
+      </ul>
+    </div>
+    <div class="phone sm"><picture><source data-light media="(prefers-color-scheme: light)" srcset="img/event-light.jpg"><img src="img/event.jpg" width="644" height="1400" loading="lazy" alt="A calendar dinner in Voss: Leave by 12:36, a 5 h 13 min drive, the verdict LAYERS and the weather at each town on the way."></picture></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap feature flip">
+    <div class="text">
+      <p class="caption">Rhythm &amp; Daybreak</p>
+      <h2>Your week, with a verdict for each part.</h2>
+      <p class="body">Add work, the commute, runs and plans as beats in your week. Each one gets a verdict: good, umbrella, windy, cold.</p>
+      <p class="body">Daybreak brings it all together in one short brief each morning, at the time you choose.</p>
+    </div>
+    <div class="phone sm"><picture><source data-light media="(prefers-color-scheme: light)" srcset="img/daybreak-light.jpg"><img src="img/daybreak.jpg" width="644" height="1400" loading="lazy" alt="Daybreak for Sunday 18 October in Oslo: 3° to 10°, clear sky, dry. A 10:00 hike is marked GOOD."></picture></div>
+  </div>
+</section>
+
+<section id="look">
+  <div class="wrap feature">
+    <div class="text">
+      <p class="caption">Make it yours</p>
+      <h2>Twenty-six themes. Here's a taste.</h2>
+      <p class="body">Every theme brings its own colours and type, down to the dots in the graph. Keep one, follow light and dark, switch at sunrise and sunset, shuffle daily or let the weather choose.</p>
+      <div class="chips" role="group" aria-label="Theme">
+        <button class="chip" type="button" data-theme="classic" aria-pressed="true"><i style="background:#000;--d:#d71921"></i>Classic</button>
+        <button class="chip" type="button" data-theme="paper" aria-pressed="false"><i style="background:#f3f0e8;--d:#d71921"></i>Paper</button>
+        <button class="chip" type="button" data-theme="aurora" aria-pressed="false"><i style="background:radial-gradient(circle at 60% 45%,#15705f,#040a18 70%);--d:#ff6fb5"></i>Aurora</button>
+        <button class="chip" type="button" data-theme="sky" aria-pressed="false"><i style="background:linear-gradient(#2a6db8,#104080);--d:#ffc83d"></i>Sky</button>
+        <button class="chip" type="button" data-theme="blueprint" aria-pressed="false"><i style="background:#0e3a8a;--d:#ffd23f"></i>Blueprint</button>
+        <button class="chip" type="button" data-theme="pocket" aria-pressed="false"><i style="background:#9bbc0f;--d:#a0215b"></i>Pocket</button>
+      </div>
+      <p class="theme-note" id="theme-note" aria-live="polite"><b>Classic.</b> Black, white and one red dot. Where Boros started.</p>
+      <p class="body" style="margin-top:18px">Plus temperature styles, six icon sets, your own accent and a stronger-contrast mode in every theme.</p>
+    </div>
+    <div class="phone sm swap" id="theme-phone"><picture><source data-light media="(prefers-color-scheme: light)" srcset="img/theme-paper.jpg"><img src="img/theme-classic.jpg" width="644" height="1400" loading="lazy" alt="Boros in the Classic theme: 11° and clear in Zagreb."></picture></div>
+  </div>
+</section>
+
+<section id="widgets">
+  <div class="wrap">
+    <p class="caption">Widgets</p>
+    <h2>Thirteen widgets. Each one answers one thing.</h2>
+    <p class="body" style="max-width:40em">Home screen, lock screen and StandBy, in your theme and kept fresh in the background. Nine of them are new.</p>
+    <div class="wgrid">
+      <figure class="s"><img src="img/widget-rainclock.jpg" width="340" height="340" loading="lazy" alt="Rain clock widget: a ring of sixty dots around the words NEXT HOUR, DRY."><figcaption><b>Rain clock</b>The next hour as a clock face: one dot a minute, red where it rains, and a countdown in the middle.</figcaption></figure>
+      <figure class="s"><img src="img/widget-umbrella.jpg" width="340" height="340" loading="lazy" alt="Umbrella? widget answering No. Dry for the next 12 hours."><figcaption><b>Umbrella?</b>Yes or no for the next 12 hours, with when and how much. On a yes the whole widget turns red.</figcaption></figure>
+      <figure class="s"><img src="img/widget-thermometer.jpg" width="340" height="340" loading="lazy" alt="Thermometer widget: a column from today's low to high with now marked in red."><figcaption><b>Thermometer<span class="tag">FREE</span></b>Today's low and high as a column, with the temperature now marked on it.</figcaption></figure>
+      <figure class="s"><img src="img/widget-nightstand.jpg" width="340" height="340" loading="lazy" alt="Nightstand widget: a red dot-matrix clock, the date and the temperature."><figcaption><b>Nightstand</b>For StandBy: a dim red dot-matrix clock and the hours ahead, so it never lights up the room.</figcaption></figure>
+      <figure class="m"><img src="img/widget-departures.jpg" width="728" height="340" loading="lazy" alt="Departures widget: a split-flap board listing now, 12:00, 15:00 and 18:00 with temperatures and CLEAR or CLOUDS."><figcaption><b>Departures</b>Now and the next hours on an airport split-flap board.</figcaption></figure>
+      <figure class="m"><img src="img/widget-thennow.jpg" width="728" height="340" loading="lazy" alt="Then and now widget: yesterday 11°, now 10°, minus one degree, just like yesterday."><figcaption><b>Then &amp; now</b>Warmer or colder than this time yesterday, by how much, and what to wear about it.</figcaption></figure>
+      <figure class="l"><img src="img/widget-poster.jpg" width="728" height="764" loading="lazy" alt="Poster widget: a huge 11° on a white Swiss grid with an orange sun, and wind, rain, UV and humidity below."><figcaption><b>Poster</b>One huge number on a strict Swiss grid, with wind, rain chance, UV and humidity underneath.</figcaption></figure>
+      <div class="more">
+        <ul class="points" style="margin-top:0">
+          <li><span><b>Week on paper</b>: the week ahead as quiet ink columns on paper, every day drawn to the same scale.</span></li>
+          <li><span><b>Month stripes</b>: this month's daily highs as colour stripes, from what Boros has seen where you are. A new stripe every day.</span></li>
+          <li><span><b>Now, Rain, Day and 7 days</b>: the temperature in dot type, the two-hour rain countdown, today in full and the week ahead, on the home and lock screen.</span></li>
+        </ul>
+        <p class="body" style="margin-top:22px;font-size:13px">Now and Thermometer are free. The rest come with Boros Pro.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="history">
+  <div class="wrap feature flip">
+    <div class="text">
+      <p class="caption">History <span class="soon-tag">Coming soon</span></p>
+      <h2>Know your holiday's weather before you book.</h2>
+      <p class="body">Eyeing a new spot for the summer? Pick the place and your dates, and Boros looks back through more than eighty years of weather to show what those days are usually like there.</p>
+      <ul class="points">
+        <li><span><b>A typical week</b>: highs and lows, hours of sun, and how much rain to expect.</span></li>
+        <li><span><b>The odds on any day</b>: dry, sunny, warm enough for the beach, or hot.</span></li>
+        <li><span><b>Year by year</b>: the best and worst years for those dates, and how they've changed.</span></li>
+        <li><span><b>Any place on Earth</b>, any dates back to 1940.</span></li>
+      </ul>
+      <p class="body" style="margin-top:18px;font-size:12px">Coming to the app in a later update.</p>
+    </div>
+    <div class="hist" aria-label="Preview: a typical 1 June to 31 August in Zagreb">
+      <div class="hist-head"><span class="hist-place">Zagreb</span><span class="hist-sub">1 Jun – 31 Aug · the last 30 summers</span></div>
+      <p class="caption" style="margin:18px 0 10px">A typical summer</p>
+      <div class="hist-tiles">
+        <div><b>1110</b><span>hours of sun</span><em>80% of daylight</em></div>
+        <div><b>233 mm</b><span>of rain</span><em>1 day in 3 wet</em></div>
+        <div><b>27°/17°</b><span>high / low</span><em>up to 39°</em></div>
+      </div>
+      <p class="caption" style="margin:22px 0 4px">Chance on any day</p>
+      <div class="hist-rows">
+        <div><span>Dry</span><b>67%</b></div>
+        <div><span>Mostly sunny</span><b>93%</b></div>
+        <div><span>Warm (25°+)</span><b>68%</b></div>
+        <div><span>Hot (30°+)</span><b>26%</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <p class="caption">Everywhere you look</p>
+    <h2>On your wrist, your lock screen and in Siri.</h2>
+    <div class="grid">
+      <div class="card"><div class="k">ALERTS</div><h3>Rain soon, wind, frost</h3><p class="body">A heads-up 15 minutes before rain, before strong wind, and the evening before a frosty morning. Off until you turn them on.</p></div>
+      <div class="card"><div class="k">LIVE ACTIVITY</div><h3>Rain countdown</h3><p class="body">When rain is close, the next two hours sit on your lock screen and in the Dynamic Island.</p></div>
+      <div class="card"><div class="k">WIDGETS</div><h3>Thirteen to choose from</h3><p class="body">Home screen, lock screen and StandBy widgets in your theme, kept fresh in the background.</p></div>
+      <div class="card"><div class="k">APPLE WATCH</div><h3>The forecast and complications</h3><p class="body">The Watch app mirrors your place, units and look from the phone.</p></div>
+      <div class="card"><div class="k">SIRI</div><h3>Just ask</h3><p class="body">"Do I need an umbrella?", "What should I wear?", "When will it rain?", "Best time for a run?"</p></div>
+      <div class="card"><div class="k">DATA</div><h3>Open weather data</h3><p class="body">Forecasts from MET Norway, and NOAA in the US with real rain chances, gusts and official warnings.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="pro">
+  <div class="wrap">
+    <p class="caption">Free &amp; Pro</p>
+    <h2>The forecast is free. Always.</h2>
+    <p class="body" style="max-width:40em">Boros is made by one person. No ads, no tracking, no data sold. Pro unlocks planning and every look, monthly, yearly (with a free week to try it) or once for good.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Free</h3>
+        <p class="sub">Everything you need to know the weather.</p>
+        <ul class="points">
+          <li><span><b>The full forecast</b>: now, 24 hours with time-travel, next 2 hours, details, 7 days</span></li>
+          <li><span><b>Alerts</b> and the rain countdown Live Activity</span></li>
+          <li><span><b>Air quality and pollen</b></span></li>
+          <li><span><b>Now and Thermometer widgets</b> and Siri questions</span></li>
+          <li><span><b>Three themes</b>: Classic, Paper and Aurora</span></li>
+          <li><span><b>Your location plus three places</b></span></li>
+          <li><span><b>All accessibility settings</b></span></li>
+        </ul>
+      </div>
+      <div class="plan pro">
+        <div class="dots" data-dots="PRO" data-pitch="3.6" data-color="var(--accent-text)" style="margin-bottom:12px" role="img" aria-label="Pro"></div>
+        <h3>Boros Pro</h3>
+        <p class="sub">Plan around the weather, and make it yours.</p>
+        <ul class="points">
+          <li><span><b>All 26 themes</b>, temperature styles, icon sets, accents, theme modes and sounds</span></li>
+          <li><span><b>Rhythm and Daybreak</b>: your week and a brief every morning</span></li>
+          <li><span><b>Calendar autopilot and trips</b>: routes with stops, places, flights and a tracked trip</span></li>
+          <li><span><b>Best time for…</b> runs, rides, walks, laundry and more</span></li>
+          <li><span><b>Every widget, the Apple Watch app</b> and complications</span></li>
+          <li><span><b>Unlimited places</b></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap feature">
+    <div class="text">
+      <p class="caption">Privacy</p>
+      <h2>Your weather stays yours.</h2>
+      <ul class="points">
+        <li><span><b>No account.</b> Nothing to sign up for.</span></li>
+        <li><span><b>Rounded coordinates</b> go to the weather service; your location is never stored on a server.</span></li>
+        <li><span><b>Calendar events are read only on your phone</b> to plan trips, and never leave it.</span></li>
+        <li><span><b>Anonymous usage counts</b> help improve Boros, and you can switch them off in Settings.</span></li>
+      </ul>
+    </div>
+    <div class="phone sm"><picture><source data-light media="(prefers-color-scheme: light)" srcset="img/intro-light.jpg"><img src="img/intro.jpg" width="644" height="1400" loading="lazy" alt="The Boros intro: BOROS WEATHER in dot-matrix letters and 'Weather, your way.'"></picture></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <p style="color:var(--ink)">Boros Weather for iPhone and Apple Watch</p>
+      <p>Coming soon to the App Store.</p>
+    </div>
+    <div>
+      <p><a href="support.html">Support</a> · <a href="privacy.html">Privacy policy</a> · <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">Terms of Use</a></p>
+      <p>Contact: <a href="mailto:support@borosweather.app">support@borosweather.app</a></p>
+    </div>
+    <div>
+      <p>Weather data: <a href="https://api.met.no">MET Norway</a> (CC BY 4.0) and <a href="https://www.weather.gov">NOAA National Weather Service</a>.</p>
+      <p>© 2026 Vjekoslav Jersic</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// 5×7 dot-matrix letters, as in the app.
+const GLYPHS = {
+  A:"01110100011000111111100011000110001", B:"11110100011000111110100011000111110", C:"01110100011000010000100001000101110",
+  D:"11110100011000110001100011000111110", E:"11111100001000011110100001000011111", F:"11111100001000011110100001000010000",
+  G:"01110100011000010111100011000101111", H:"10001100011000111111100011000110001", I:"01110001000010000100001000010001110",
+  K:"10001100101010011000101001001010001", L:"10000100001000010000100001000011111", M:"10001110111010110101100011000110001",
+  N:"10001110011010110011100011000110001", O:"01110100011000110001100011000101110", P:"11110100011000111110100001000010000",
+  R:"11110100011000111110101001001010001", S:"01111100001000001110000010000111110", T:"11111001000010000100001000010000100",
+  U:"10001100011000110001100011000101110", V:"10001100011000110001100010101000100", W:"10001100011000110101101011010101010",
+  Y:"10001100010101000100001000010000100", "0":"01110100011001110101110011000101110", "1":"00100011000010000100001000010001110",
+  "2":"01110100010000100010001000100011111", "3":"11110000010000101110000010000111110", "4":"00010001100101010010111110001000010",
+  "5":"11111100001111000001000011000101110", "6":"00110010001000011110100011000101110", "7":"11111000010001000100010000100001000",
+  "8":"01110100011000101110100011000101110", "9":"01110100011000101111000010001001100", ":":"00000001000010000000001000010000000",
+  " ":"00000000000000000000000000000000000",
+};
+const SVG = "http://www.w3.org/2000/svg";
+
+function drawDots(el, text) {
+  const pitch = parseFloat(el.dataset.pitch || 4), color = el.dataset.color || "var(--ink)", unlit = el.dataset.unlit;
+  const r = pitch * 0.36, cols = text.length * 6 - 1;
+  const svg = document.createElementNS(SVG, "svg");
+  svg.setAttribute("width", cols * pitch); svg.setAttribute("height", 7 * pitch);
+  svg.setAttribute("viewBox", `0 0 ${cols * pitch} ${7 * pitch}`);
+  [...text.toUpperCase()].forEach((ch, i) => {
+    const g = GLYPHS[ch] || GLYPHS[" "];
+    for (let k = 0; k < 35; k++) {
+      const on = g[k] === "1";
+      if (!on && !unlit) continue;
+      const c = document.createElementNS(SVG, "circle");
+      c.setAttribute("cx", (i * 6 + k % 5) * pitch + pitch / 2);
+      c.setAttribute("cy", Math.floor(k / 5) * pitch + pitch / 2);
+      c.setAttribute("r", on ? r : r * 0.55);
+      c.style.fill = on ? color : "var(--unlit)";
+      svg.appendChild(c);
+    }
+  });
+  el.replaceChildren(svg);
+}
+document.querySelectorAll("[data-dots]").forEach(el => drawDots(el, el.dataset.dots));
+
+// The red dot field from the app's Classic backdrop.
+(function field() {
+  const svg = document.getElementById("field");
+  svg.setAttribute("viewBox", "0 0 560 520");
+  let seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let i = 0; i < 220; i++) {
+    const a = rnd() * Math.PI * 2, d = Math.sqrt(rnd()) * 250;
+    const x = 330 + Math.cos(a) * d, y = 220 + Math.sin(a) * d * 0.85;
+    const c = document.createElementNS(SVG, "circle");
+    c.setAttribute("cx", x.toFixed(1)); c.setAttribute("cy", y.toFixed(1));
+    c.setAttribute("r", (1.6 + rnd() * 1.6).toFixed(1));
+    c.style.fill = "var(--accent)";
+    c.setAttribute("opacity", (0.25 + 0.6 * (1 - d / 250) * rnd()).toFixed(2));
+    svg.appendChild(c);
+  }
+})();
+
+// Time-travel demo: a gentle day, warmest mid-afternoon.
+(function demo() {
+  // From 09:00: coolest around 05:00, warmest around 17:00.
+  const temps = Array.from({ length: 24 }, (_, i) => Math.round(13.5 - 5.5 * Math.cos(((i + 9 - 5) / 24) * 2 * Math.PI)));
+  const words = temps.map((_, i) => (i < 9 ? "CLEAR" : i < 13 ? "FAIR" : i < 16 ? "CLOUDY" : "CLEAR"));
+  const svg = document.getElementById("demo-graph"), tempEl = document.getElementById("demo-temp");
+  const whenEl = document.getElementById("demo-when"), wordEl = document.getElementById("demo-word");
+  const feelsEl = document.getElementById("demo-feels"), hintEl = document.getElementById("demo-hint");
+  const lo = Math.min(...temps), hi = Math.max(...temps), levels = 8, colW = 20, row = 15;
+  let current = null;
+  document.getElementById("demo-hi").textContent = `H ${hi}°`;
+  document.getElementById("demo-lo").textContent = `L ${lo}°`;
+  const axis = document.getElementById("demo-axis");
+  [[0, "now"], [5, "14"], [11, "20"], [17, "02"]].forEach(([i, label]) => {
+    const s = document.createElement("span");
+    s.textContent = label;
+    s.style.left = `${((i * colW + 10) / 480) * 100}%`;
+    if (i === 0) s.style.left = "0";
+    axis.appendChild(s);
+  });
+
+  function render() {
+    svg.replaceChildren();
+    temps.forEach((t, i) => {
+      const lit = 1 + Math.round(((t - lo) / (hi - lo)) * (levels - 1));
+      for (let l = 0; l < levels; l++) {
+        const c = document.createElementNS(SVG, "circle");
+        c.setAttribute("cx", i * colW + 10); c.setAttribute("cy", 140 - l * row - 8);
+        c.setAttribute("r", 4.4);
+        const on = l < lit;
+        c.style.fill = on ? (i === current ? "var(--accent)" : current === null ? "var(--ink)" : "var(--dim)") : "var(--unlit)";
+        svg.appendChild(c);
+      }
+    });
+    const i = current ?? 0, t = temps[i];
+    const hour = (9 + i) % 24;
+    tempEl.textContent = `${t}°`;
+    feelsEl.textContent = `FEELS ${t - (i < 3 || i > 18 ? 1 : 0)}°`;
+    drawDots(whenEl, current === null ? "NOW" : `SUN ${String(hour).padStart(2, "0")}:00`);
+    drawDots(wordEl, words[i]);
+    hintEl.textContent = current === null ? "← drag to time-travel →" : "release for now";
+    hintEl.style.color = current === null ? "" : "var(--accent-text)";
+    svg.setAttribute("aria-valuenow", i);
+    svg.setAttribute("aria-valuetext", `${current === null ? "Now" : String(hour).padStart(2, "0") + ":00"}, ${t}°, ${words[i].toLowerCase()}`);
+  }
+  function at(e) {
+    const r = svg.getBoundingClientRect();
+    return Math.max(0, Math.min(23, Math.floor(((e.clientX - r.left) / r.width) * 24)));
+  }
+  let dragging = false;
+  svg.addEventListener("pointerdown", e => { dragging = true; svg.setPointerCapture(e.pointerId); current = at(e); render(); });
+  svg.addEventListener("pointermove", e => { if (dragging) { const n = at(e); if (n !== current) { current = n; render(); } } });
+  const release = () => { if (!dragging) return; dragging = false; setTimeout(() => { current = null; render(); }, 450); };
+  svg.addEventListener("pointerup", release);
+  svg.addEventListener("pointercancel", release);
+  svg.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      current = Math.max(0, Math.min(23, (current ?? 0) + (e.key === "ArrowRight" ? 1 : -1)));
+      render();
+    } else if (e.key === "Escape") { current = null; render(); }
+  });
+  svg.addEventListener("blur", () => { current = null; render(); });
+  render();
+})();
+
+// Theme switcher: crossfades the phone to the same screen in another theme.
+(function themes() {
+  const notes = {
+    classic: ["Classic", "Black, white and one red dot. Where Boros started."],
+    paper: ["Paper", "Warm off-white and ink-dark type, made for bright days."],
+    aurora: ["Aurora", "Northern-light greens and violets drifting behind the forecast."],
+    sky: ["Sky", "Classic weather colours: blue sky, a turning sun and animated colour icons."],
+    blueprint: ["Blueprint", "Drafting-table blue, a fine grid and yellow marks."],
+    pocket: ["Pocket", "Pea green and pixel type, like a handheld from long ago."],
+  };
+  const phone = document.getElementById("theme-phone"), note = document.getElementById("theme-note");
+  Object.keys(notes).forEach(id => { const i = new Image(); i.src = `img/theme-${id}.jpg`; });  // preload
+  // Classic and Paper follow the page's dark and light; another pick stays put.
+  document.addEventListener("boros-theme", e => {
+    const want = e.detail === "light" ? "paper" : "classic";
+    const on = document.querySelector('.chip[aria-pressed="true"]').dataset.theme;
+    if (on !== "classic" && on !== "paper") return;
+    if (phone.querySelector("picture")) {  // still the first image: <picture> already shows the right one
+      document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c.dataset.theme === want));
+      note.innerHTML = `<b>${notes[want][0]}.</b> ${notes[want][1]}`;
+    } else if (on !== want) {
+      document.querySelector(`.chip[data-theme="${want}"]`).click();
+    }
+  });
+  document.querySelectorAll(".chip").forEach(chip => chip.addEventListener("click", () => {
+    const id = chip.dataset.theme, [name, text] = notes[id];
+    document.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === chip));
+    note.innerHTML = `<b>${name}.</b> ${text}`;
+    const old = phone.querySelectorAll("picture, img"), img = new Image();
+    img.src = `img/theme-${id}.jpg`; img.width = 644; img.height = 1400;
+    img.alt = `Boros in the ${name} theme: 11° and clear in Zagreb.`;
+    img.style.opacity = 0;
+    phone.appendChild(img);
+    img.decode().catch(() => {}).then(() => {
+      requestAnimationFrame(() => { img.style.opacity = 1; });
+      setTimeout(() => { old.forEach(o => o.remove()); img.style.position = ""; }, 480);
+    });
+  }));
+})();
+</script>
+</body>
+</html>

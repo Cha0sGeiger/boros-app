@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boros Support</title>
+<meta name="description" content="Help with Boros Weather: contact, Boros Pro purchases and subscriptions, location, widgets and alerts.">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f3f0e8" media="(prefers-color-scheme: light)">
+<link rel="icon" href="img/favicon.png">
+<script src="theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #fff; --dim: #9a9a9a; --accent: #d71921; --accent-text: #ff3b42; --bg: #000; --hairline: #1c1c1c; --card: #0b0b0b; --body: #c9c9c9; color-scheme: dark light; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) { --bg: #f3f0e8; --ink: #161513; --dim: #66625a; --accent: #d71921; --accent-text: #c4161d; --hairline: #e0dbd0; --card: #ebe7dd; --body: #3a3833; color-scheme: light; }
+  }
+  :root[data-theme="light"] { --bg: #f3f0e8; --ink: #161513; --dim: #66625a; --accent: #d71921; --accent-text: #c4161d; --hairline: #e0dbd0; --card: #ebe7dd; --body: #3a3833; color-scheme: light; }
+  :root[data-theme="dark"] { color-scheme: dark; }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 "Space Grotesk", system-ui, sans-serif; -webkit-text-size-adjust: 100%; }
+  main { max-width: 720px; margin: 0 auto; padding: 32px 16px 80px; }
+  .top { font: 13px "Space Mono", monospace; padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--hairline); }
+  .top a { color: var(--dim); text-decoration: none; }
+  h1 { font-size: 40px; line-height: 1.1; margin: 0 0 14px; font-weight: 500; letter-spacing: -.01em; }
+  .lede { font-size: 19px; margin: 0 0 30px; }
+  .contact { background: var(--card); border: 1px solid var(--hairline); border-radius: 22px; padding: 22px; }
+  .contact .k, h2 { font: 400 12px/1.4 "Space Mono", monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-text); }
+  .contact .k { margin-bottom: 10px; }
+  .contact a.mail { font-size: 22px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--accent); word-break: break-all; }
+  .contact p { margin: 12px 0 0; font: 13px/1.6 "Space Mono", monospace; color: var(--dim); }
+  h2 { margin: 48px 0 6px; }
+  details { border-bottom: 1px solid var(--hairline); }
+  summary { cursor: pointer; list-style: none; padding: 18px 28px 18px 0; position: relative; font-size: 18px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; position: absolute; right: 2px; top: 16px; font: 20px "Space Mono", monospace; color: var(--accent-text); }
+  details[open] summary::after { content: "−"; }
+  details p { margin: 0 0 18px; font: 14px/1.7 "Space Mono", monospace; color: var(--body); }
+  a { color: var(--accent-text); }
+  footer { margin-top: 56px; font: 12px/1.8 "Space Mono", monospace; color: var(--dim); }
+  footer a { color: var(--dim); }
+  .mode-toggle { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--hairline); background: transparent; color: var(--ink);
+                 display: inline-grid; place-items: center; cursor: pointer; padding: 0; flex: none; }
+  .mode-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mode-toggle .moon, .mode-toggle[data-mode="light"] .sun { display: none; }
+  .mode-toggle[data-mode="light"] .moon { display: block; }
+  .top { display: flex; justify-content: space-between; align-items: center; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><a href="./">← Boros</a><button class="mode-toggle" type="button" aria-label="Switch to light mode"><svg class="sun" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3.2" fill="currentColor"/><circle cx="14.20" cy="8.00" r="1.1" fill="currentColor"/><circle cx="12.38" cy="12.38" r="1.1" fill="currentColor"/><circle cx="8.00" cy="14.20" r="1.1" fill="currentColor"/><circle cx="3.62" cy="12.38" r="1.1" fill="currentColor"/><circle cx="1.80" cy="8.00" r="1.1" fill="currentColor"/><circle cx="3.62" cy="3.62" r="1.1" fill="currentColor"/><circle cx="8.00" cy="1.80" r="1.1" fill="currentColor"/><circle cx="12.38" cy="3.62" r="1.1" fill="currentColor"/></svg><svg class="moon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M12.2 10.9A5.6 5.6 0 0 1 5.1 3.8a5.6 5.6 0 1 0 7.1 7.1z" fill="currentColor"/></svg></button></div>
+  <h1>Support</h1>
+  <p class="lede">Something not working, or an idea for Boros? Boros is made by one person, and every message is read.</p>
+
+  <div class="contact">
+    <div class="k">Email</div>
+    <a class="mail" href="mailto:support@borosweather.app?subject=Boros%20support">support@borosweather.app</a>
+    <p>Or in the app: Settings → About → Send feedback, which can add your app version and device for you. Replies usually within a few days.</p>
+  </div>
+
+  <h2>Boros Pro</h2>
+  <details>
+    <summary>How do I restore Boros Pro on a new iPhone?</summary>
+    <p>Open Boros → Settings → About → See what's in Pro, then tap Restore purchases. Use the same Apple Account you bought Pro with. A subscription or lifetime Pro also unlocks on its own once Boros checks with the App Store.</p>
+  </details>
+  <details>
+    <summary>How do I cancel my subscription?</summary>
+    <p>Subscriptions are handled by Apple. On your iPhone open Settings → your name → Subscriptions → Boros Pro and tap Cancel Subscription. Pro stays on until the end of the period you've paid for. If you cancel during the free trial, you aren't charged.</p>
+  </details>
+  <details>
+    <summary>Can I get a refund?</summary>
+    <p>Refunds are decided by Apple. Request one at <a href="https://reportaproblem.apple.com">reportaproblem.apple.com</a>.</p>
+  </details>
+  <details>
+    <summary>Does Pro work for my family?</summary>
+    <p>Yes. With Family Sharing turned on for purchases, everyone in your family group gets Boros Pro.</p>
+  </details>
+  <details>
+    <summary>What stays free?</summary>
+    <p>The full forecast, air quality and pollen, alerts, the rain countdown on the lock screen, the Now widget, Siri questions, three themes, your location plus three places and every accessibility setting. Pro adds planning, every look, all widgets, the Apple Watch app and unlimited places.</p>
+  </details>
+
+  <h2>Weather and the app</h2>
+  <details>
+    <summary>Boros doesn't show the weather where I am.</summary>
+    <p>Allow location: iPhone Settings → Privacy &amp; Security → Location Services → Boros → While Using the App. Without it, Boros opens on your first saved city.</p>
+  </details>
+  <details>
+    <summary>My widgets look out of date.</summary>
+    <p>iOS decides when widgets refresh. Opening Boros updates them right away. Keep Background App Refresh on for Boros (Settings → General → Background App Refresh) so it can update them in the background.</p>
+  </details>
+  <details>
+    <summary>I don't get rain, wind or frost alerts.</summary>
+    <p>Alerts are off until you turn them on in Boros → Settings → Alerts. Also allow notifications for Boros in iPhone Settings → Notifications.</p>
+  </details>
+  <details>
+    <summary>Where does the forecast come from?</summary>
+    <p>From MET Norway, the Norwegian Meteorological Institute (CC BY 4.0). In the US, Boros uses NOAA's National Weather Service, with rain chances, gusts and official warnings. You can pick the source by tapping "Weather data" at the bottom of the forecast.</p>
+  </details>
+  <details>
+    <summary>The Apple Watch app doesn't show my place or theme.</summary>
+    <p>The Watch app takes its place, units and look from your iPhone. Open Boros on the iPhone once with the watch nearby and it will sync. The Watch app is part of Boros Pro.</p>
+  </details>
+  <details>
+    <summary>How do I add a flight so Boros finds it?</summary>
+    <p>In your calendar, start the title with "Flight" (or ✈) and say where you're going, e.g. "Flight to Split". Set the location to the airport you leave from, and the start and end to takeoff and landing. Boros looks 4 days ahead in the calendars you picked in Settings → Calendar, and tells you when to leave for the airport.</p>
+  </details>
+  <details>
+    <summary>How does tracking a trip work?</summary>
+    <p>Plan a trip, then tap Track this trip under the report. It shows on the main page and Boros checks it once a day, every few hours in the last day and every half hour just before you go. Only one trip is tracked: a new one replaces it. Tap × to stop, or it goes away by itself once the trip is over.</p>
+  </details>
+  <details>
+    <summary>How do I share a day?</summary>
+    <p>Open a day from the 7-day forecast and tap the share button at the top. Boros makes a picture of the day you can send to anyone.</p>
+  </details>
+  <details>
+    <summary>How do I delete my data?</summary>
+    <p>Boros has no account and keeps your places, settings and plans only on your devices. Deleting the app removes them. Anonymous usage counts can be switched off in Settings → About → Share anonymous usage.</p>
+  </details>
+
+  <footer>
+    <a href="privacy.html">Privacy policy</a> · <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">Terms of Use (Apple standard EULA)</a> · <a href="./">Boros</a>
+  </footer>
+</main>
+</body>
+</html>

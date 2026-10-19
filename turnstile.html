@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Boros check</title>
+<!-- Loaded invisibly by the app before it sends feedback: Cloudflare Turnstile hands back a token
+     that api.borosweather.app checks, so the feedback inbox stays free of spam. -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=boros&render=explicit" async defer></script>
+</head>
+<body>
+<div id="check"></div>
+<script>
+  function post(token) {
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.turnstile) {
+      window.webkit.messageHandlers.turnstile.postMessage(token || "");
+    }
+  }
+  function boros() {
+    turnstile.render("#check", {
+      sitekey: "0x4AAAAAAFZ8ZjbicV51yO7Y",
+      callback: post,
+      "error-callback": () => post(""),
+      "expired-callback": () => post(""),
+      "timeout-callback": () => post(""),
+    });
+  }
+</script>
+</body>
+</html>

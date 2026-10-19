@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boros Privacy Policy</title>
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f3f0e8" media="(prefers-color-scheme: light)">
+<link rel="icon" href="img/favicon.png">
+<script src="theme.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink: #fff; --dim: #9a9a9a; --accent: #ff3b42; --bg: #000; --hairline: #1c1c1c; --body: #d6d6d6; color-scheme: dark light; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) { --ink: #161513; --dim: #66625a; --accent: #c4161d; --bg: #f3f0e8; --hairline: #e0dbd0; --body: #3a3833; color-scheme: light; }
+  }
+  :root[data-theme="light"] { --ink: #161513; --dim: #66625a; --accent: #c4161d; --bg: #f3f0e8; --hairline: #e0dbd0; --body: #3a3833; color-scheme: light; }
+  :root[data-theme="dark"] { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 "Space Grotesk", system-ui, sans-serif; -webkit-text-size-adjust: 100%; }
+  main { max-width: 680px; margin: 0 auto; padding: 32px 16px 80px; }
+  .top { font: 13px "Space Mono", monospace; padding-bottom: 28px; margin-bottom: 36px; border-bottom: 1px solid var(--hairline); }
+  .top a { color: var(--dim); text-decoration: none; }
+  h1 { font-size: 38px; line-height: 1.1; margin: 0 0 8px; font-weight: 500; letter-spacing: -.01em; }
+  h2 { font: 400 12px/1.4 "Space Mono", monospace; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin: 36px 0 8px; }
+  .lede { font-size: 20px; margin: 22px 0 0; }
+  .meta { color: var(--dim); font: 13px "Space Mono", monospace; }
+  p { margin: 0 0 10px; color: var(--body); }
+  .lede { color: var(--ink); }
+  a { color: var(--accent); }
+  .mode-toggle { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--hairline); background: transparent; color: var(--ink);
+                 display: inline-grid; place-items: center; cursor: pointer; padding: 0; flex: none; }
+  .mode-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .mode-toggle .moon, .mode-toggle[data-mode="light"] .sun { display: none; }
+  .mode-toggle[data-mode="light"] .moon { display: block; }
+  .top { display: flex; justify-content: space-between; align-items: center; }
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><a href="./">← Boros</a><button class="mode-toggle" type="button" aria-label="Switch to light mode"><svg class="sun" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="3.2" fill="currentColor"/><circle cx="14.20" cy="8.00" r="1.1" fill="currentColor"/><circle cx="12.38" cy="12.38" r="1.1" fill="currentColor"/><circle cx="8.00" cy="14.20" r="1.1" fill="currentColor"/><circle cx="3.62" cy="12.38" r="1.1" fill="currentColor"/><circle cx="1.80" cy="8.00" r="1.1" fill="currentColor"/><circle cx="3.62" cy="3.62" r="1.1" fill="currentColor"/><circle cx="8.00" cy="1.80" r="1.1" fill="currentColor"/><circle cx="12.38" cy="3.62" r="1.1" fill="currentColor"/></svg><svg class="moon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M12.2 10.9A5.6 5.6 0 0 1 5.1 3.8a5.6 5.6 0 1 0 7.1 7.1z" fill="currentColor"/></svg></button></div>
+  <h1>Boros Privacy Policy</h1>
+  <p class="meta">Effective 18 October 2026</p>
+  <p class="lede">Boros keeps your data on your device. There are no accounts, no ads and no tracking across apps or websites.</p>
+
+  <h2>What stays on your device</h2>
+  <p>Your saved places, settings and themes. Your rhythm: beats, Home base and Daybreak times. Calendar events, which Boros reads only on your phone to plan trips; event details never leave it. Boros shares these only with its own widgets and Apple Watch app.</p>
+
+  <h2>Location</h2>
+  <p>Used to show the weather where you are. Boros sends rounded coordinates to fetch the forecast: MET Norway's, ECMWF, DWD ICON, Blend and air quality through Boros' own servers (a Cloudflare Worker at api.borosweather.app and Boros' weather server in Finland), which share one forecast between everyone in the same area and keep no log of who asked; NOAA directly for places in the US. Boros also asks Apple for the place's time zone. Your location is never stored on any server or linked to you. City names you type in search go to Apple Maps.</p>
+
+  <h2>Routes and maps</h2>
+  <p>Trip planning and the rain map use Apple Maps. Apple handles those requests under <a href="https://www.apple.com/privacy/">Apple's privacy policy</a>.</p>
+
+  <h2>Notifications</h2>
+  <p>Rain, wind, frost, air and Daybreak alerts are created on your phone from the forecast. No notification server holds your data.</p>
+
+  <h2>Anonymous usage analytics</h2>
+  <p>Boros uses TelemetryDeck to count which features are used and how the app is set up, for example the theme you chose or that you opened the rain map. Each signal carries an anonymous, hashed identifier plus app version, iOS version and device model. It never includes your location, place names, calendar events, beat names or anything you type. You can turn it off at any time in Settings → About → Share anonymous usage.</p>
+
+  <h2>Feedback</h2>
+  <p>If you send feedback, Boros sends your message, the type you chose, your email if you add one, and (if you allow it) app version, iOS, device and settings, through Boros' server to the support inbox. It never includes your location. Before sending, Cloudflare Turnstile checks that the message comes from a real device rather than a spam bot. Messages are used only to improve Boros; ask us to delete yours any time.</p>
+
+  <h2>Purchases</h2>
+  <p>Boros Pro and tips are bought through Apple. Apple handles payment; Boros never sees your card, name or Apple Account. The app only learns from Apple whether Pro is active, so it can unlock it on your devices.</p>
+
+  <h2>Third parties</h2>
+  <p>MET Norway (weather forecast): <a href="https://api.met.no/doc/TermsOfService">api.met.no/doc/TermsOfService</a>.<br>
+  NOAA National Weather Service (US forecasts and warnings): <a href="https://www.weather.gov/privacy">weather.gov/privacy</a>.<br>
+  TelemetryDeck (anonymous analytics): <a href="https://telemetrydeck.com/privacy/">telemetrydeck.com/privacy</a>.<br>
+  Cloudflare (Boros' server, website, feedback check): <a href="https://www.cloudflare.com/privacypolicy/">cloudflare.com/privacypolicy</a>.<br>
+  Hetzner (hosts Boros' weather server in Finland, which runs Open-Meteo's open-source software with ECMWF, DWD, NOAA GFS and Copernicus air quality data; nothing is sent on to them): <a href="https://www.hetzner.com/legal/privacy-policy/">hetzner.com/legal/privacy-policy</a>.<br>
+  Apple (place search, time zones, maps, routes, notifications, widgets, purchases): <a href="https://www.apple.com/privacy/">apple.com/privacy</a>.<br>
+  None of them receive anything that identifies you from Boros.</p>
+
+  <h2>Your rights</h2>
+  <p>Apart from feedback you send, which stays in the support inbox until you ask us to delete it, Boros holds no personal data on its own servers, so there is nothing else for us to look up, correct or delete. Deleting the app removes everything it stored on your devices. You can switch off location, calendar, notifications and analytics at any time in Settings.</p>
+
+  <h2>Children</h2>
+  <p>Boros is a general weather app and does not knowingly collect data from children.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes, the new version appears in the app and on this page with a new effective date.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about privacy: <a href="mailto:support@borosweather.app">support@borosweather.app</a></p>
+</main>
+</body>
+</html>
